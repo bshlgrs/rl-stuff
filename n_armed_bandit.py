@@ -44,7 +44,9 @@ class RLAgent:
     rewards = []
 
     for x in range(time):
-      if random.random() < self.epsilon:
+      # in the future, it would be fun to extend this such that epsilon may
+      # depend on stuff which is happening, like the round number or the value table
+      if random.random() < self.epsilon(1):
         choice = random.randrange(num_of_levers)
       else:
         choice = max(range(num_of_levers), key=lambda x: value_table[x])
@@ -67,18 +69,32 @@ class RLAgent:
     results = zip(*trials) # this is crazy bullshit
     return [sum(x) / repeats for x in results]
 
-r = RLAgent(0.1)
 
-averages = r.play_repeatedly(3, 100, 300)
-pylab.plot(averages, label = "three arms")
+def different_number_of_arms():
+  "In which we discover that more options is better for you"
+  r = RLAgent(lambda (x) : 0.1)
 
-averages = r.play_repeatedly(10, 100, 300)
-pylab.plot(averages, label = "ten arms")
+  averages = r.play_repeatedly(3, 100, 300)
+  pylab.plot(averages, label = "three arms")
 
-averages = r.play_repeatedly(100, 100, 300)
-pylab.plot(averages, label = "one hundred arms")
+  averages = r.play_repeatedly(10, 100, 300)
+  pylab.plot(averages, label = "ten arms")
 
+  averages = r.play_repeatedly(100, 100, 300)
+  pylab.plot(averages, label = "one hundred arms")
 
-pylab.legend(loc="lower right")
+  pylab.legend(loc="lower right")
 
-pylab.show()
+  pylab.show()
+
+def different_epsilons():
+  "In which we see that higher epsilons start out better, then do worse"
+  for epsilon in [0.05, 0.01, 0.1]:
+    averages = RLAgent(lambda (x) : epsilon).play_repeatedly(10, 300, 100)
+    pylab.plot(averages, label = "epsilon = %f"%epsilon)
+
+  pylab.legend(loc="lower right")
+
+  pylab.show()
+
+different_epsilons()

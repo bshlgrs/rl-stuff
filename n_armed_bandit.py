@@ -37,7 +37,7 @@ class RLAgent:
   def play(self, problem, time):
     num_of_levers = problem.num_of_levers()
 
-    value_table = [(0, 0)] * num_of_levers
+    value_table = [(random.random() * 0.00001, 0)] * num_of_levers
 
 
     choices = []
@@ -89,8 +89,9 @@ def different_number_of_arms():
 
 def different_epsilons():
   "In which we see that higher epsilons start out better, then do worse"
-  for epsilon in [0.05, 0.01, 0.1]:
-    averages = RLAgent(lambda (x) : epsilon).play_repeatedly(10, 300, 100)
+  for epsilon in [0, 0.01, 0.1]:
+    print "working on epsilon = %f"%epsilon
+    averages = RLAgent(lambda (x) : epsilon).play_repeatedly(10, 1000, 2000)
     pylab.plot(averages, label = "epsilon = %f"%epsilon)
 
   pylab.legend(loc="lower right")
